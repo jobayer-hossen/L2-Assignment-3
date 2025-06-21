@@ -17,6 +17,7 @@ const express_1 = __importDefault(require("express"));
 const borrow_model_1 = require("../models/borrow.model");
 const book_model_1 = require("../models/book.model");
 exports.borrowRoute = express_1.default.Router();
+// borrow a book
 exports.borrowRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -49,7 +50,7 @@ exports.borrowRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
 // Add this GET route for summary
 exports.borrowRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const summary = yield borrow_model_1.Borrow.aggregate([
+        const allBorrowBooks = yield borrow_model_1.Borrow.aggregate([
             {
                 $group: {
                     _id: "$book",
@@ -79,7 +80,7 @@ exports.borrowRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json({
             message: "Borrowed books summary retrieved successfully",
             success: true,
-            data: summary,
+            data: allBorrowBooks,
         });
     }
     catch (error) {
