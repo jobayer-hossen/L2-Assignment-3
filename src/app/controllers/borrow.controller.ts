@@ -10,6 +10,7 @@ borrowRoute.post("/", async (req: Request, res: Response): Promise<any> => {
     const { book, quantity, dueDate } = req.body;
 
     const foundBook = await Book.findById(book);
+
     if (!foundBook || foundBook.copies < quantity) {
       return res.status(404).json({
         message: "Not enough copies available",
@@ -18,18 +19,20 @@ borrowRoute.post("/", async (req: Request, res: Response): Promise<any> => {
     }
 
     foundBook.copies -= quantity;
+
     foundBook.updateAvailability?.();
+
     await foundBook.save();
 
-    const borrowRecord = await Borrow.create({ book, quantity, dueDate });
+    const borrowAdding = await Borrow.create({ book, quantity, dueDate });
 
     res.json({
       message: "Book borrowed successfully",
       success: true,
-      data: borrowRecord,
+      data: borrowAdding,
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Borrow failed",
       success: false,
       error: error instanceof Error ? error.message : String(error),
@@ -37,7 +40,7 @@ borrowRoute.post("/", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-// Add this GET route for summary
+// borrow summary
 borrowRoute.get("/", async (req: Request, res: Response): Promise<any> => {
   try {
     const allBorrowBooks = await Borrow.aggregate([
@@ -73,7 +76,7 @@ borrowRoute.get("/", async (req: Request, res: Response): Promise<any> => {
       data: allBorrowBooks,
     });
   } catch (error) {
-    return res.status(404).json({
+    return res.status(500).json({
       message: "Summary fetch failed",
       success: false,
       data: null,

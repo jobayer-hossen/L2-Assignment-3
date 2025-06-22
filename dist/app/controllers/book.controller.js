@@ -28,7 +28,7 @@ exports.booksRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
     catch (error) {
-        res.status(404).json({
+        res.status(500).json({
             message: "Validation failed",
             success: false,
             error: error,
@@ -54,7 +54,7 @@ exports.booksRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, func
         });
     }
     catch (error) {
-        res.status(404).json({
+        res.status(500).json({
             message: "Error retrieving books",
             success: false,
             error: error,
@@ -64,22 +64,31 @@ exports.booksRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, func
 // book retrieval by ID
 exports.booksRoute.get("/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const findBook = yield book_model_1.Book.findById(req.params.bookId);
+        const { bookId } = req.params;
+        const foundBook = yield book_model_1.Book.findById(bookId);
         res.status(200).json({
             success: true,
             message: "Books retrieved successfully",
-            data: findBook,
+            data: foundBook,
         });
+        if (!foundBook || foundBook === null) {
+            res.status(404).json({
+                success: false,
+                message: "Book not found",
+                data: null,
+            });
+            return;
+        }
     }
     catch (error) {
-        res.status(404).json({
-            message: "Book not found",
+        res.status(500).json({
+            message: "Book retrieving failed",
             success: false,
             error: error,
         });
     }
 }));
-// book update route
+// book update
 exports.booksRoute.put("/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.bookId;
@@ -94,28 +103,44 @@ exports.booksRoute.put("/:bookId", (req, res) => __awaiter(void 0, void 0, void 
             message: "Book updated successfully",
             data: updateBook,
         });
+        if (!updateBook || updateBook === null) {
+            res.status(404).json({
+                success: false,
+                message: "Book not found",
+                data: null,
+            });
+            return;
+        }
     }
     catch (error) {
-        res.status(404).json({
+        res.status(500).json({
             message: "Update failed",
             success: false,
             error: error,
         });
     }
 }));
-// book deletion route
+// book deletion
 exports.booksRoute.delete("/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.bookId;
-        yield book_model_1.Book.findByIdAndDelete(bookId);
+        const foundBook = yield book_model_1.Book.findByIdAndDelete(bookId);
         res.status(200).json({
             success: true,
             message: "Book deleted successfully",
             data: null,
         });
+        if (!foundBook || foundBook === null) {
+            res.status(404).json({
+                success: false,
+                message: "Book not found",
+                data: null,
+            });
+            return;
+        }
     }
     catch (error) {
-        res.status(404).json({
+        res.status(500).json({
             message: "Delete failed",
             success: false,
             error: error,

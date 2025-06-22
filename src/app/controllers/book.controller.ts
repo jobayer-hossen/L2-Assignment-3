@@ -14,7 +14,7 @@ booksRoute.post("/", async (req: Request, res: Response) => {
       data: book,
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Validation failed",
       success: false,
       error: error,
@@ -24,6 +24,7 @@ booksRoute.post("/", async (req: Request, res: Response) => {
 
 // book retrieval
 booksRoute.get("/", async (req: Request, res: Response) => {
+  
   const {
     filter,
     sortBy = "createdAt",
@@ -50,7 +51,7 @@ booksRoute.get("/", async (req: Request, res: Response) => {
       data: filteredBooks,
     });
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Error retrieving books",
       success: false,
       error: error,
@@ -61,22 +62,33 @@ booksRoute.get("/", async (req: Request, res: Response) => {
 // book retrieval by ID
 booksRoute.get("/:bookId", async (req: Request, res: Response) => {
   try {
-    const findBook = await Book.findById(req.params.bookId);
+    const { bookId } = req.params;
+
+    const foundBook = await Book.findById(bookId);
     res.status(200).json({
       success: true,
       message: "Books retrieved successfully",
-      data: findBook,
+      data: foundBook,
     });
+
+    if (!foundBook || foundBook === null) {
+      res.status(404).json({
+        success: false,
+        message: "Book not found",
+        data: null,
+      });
+      return;
+    }
   } catch (error) {
-    res.status(404).json({
-      message: "Book not found",
+    res.status(500).json({
+      message: "Book retrieving failed",
       success: false,
       error: error,
     });
   }
 });
 
-// book update route
+// book update
 booksRoute.put("/:bookId", async (req: Request, res: Response) => {
   try {
     const bookId = req.params.bookId;
@@ -93,8 +105,17 @@ booksRoute.put("/:bookId", async (req: Request, res: Response) => {
       message: "Book updated successfully",
       data: updateBook,
     });
+
+    if (!updateBook || updateBook === null) {
+      res.status(404).json({
+        success: false,
+        message: "Book not found",
+        data: null,
+      });
+      return;
+    }
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Update failed",
       success: false,
       error: error,
@@ -102,19 +123,28 @@ booksRoute.put("/:bookId", async (req: Request, res: Response) => {
   }
 });
 
-// book deletion route
+// book deletion
 booksRoute.delete("/:bookId", async (req: Request, res: Response) => {
   try {
     const bookId = req.params.bookId;
 
-    await Book.findByIdAndDelete(bookId);
+    const foundBook = await Book.findByIdAndDelete(bookId);
     res.status(200).json({
       success: true,
       message: "Book deleted successfully",
       data: null,
     });
+
+    if (!foundBook || foundBook === null) {
+      res.status(404).json({
+        success: false,
+        message: "Book not found",
+        data: null,
+      });
+      return;
+    }
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       message: "Delete failed",
       success: false,
       error: error,

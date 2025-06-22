@@ -32,22 +32,22 @@ exports.borrowRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
         foundBook.copies -= quantity;
         (_a = foundBook.updateAvailability) === null || _a === void 0 ? void 0 : _a.call(foundBook);
         yield foundBook.save();
-        const borrowRecord = yield borrow_model_1.Borrow.create({ book, quantity, dueDate });
+        const borrowAdding = yield borrow_model_1.Borrow.create({ book, quantity, dueDate });
         res.json({
             message: "Book borrowed successfully",
             success: true,
-            data: borrowRecord,
+            data: borrowAdding,
         });
     }
     catch (error) {
-        res.status(404).json({
+        res.status(500).json({
             message: "Borrow failed",
             success: false,
             error: error instanceof Error ? error.message : String(error),
         });
     }
 }));
-// Add this GET route for summary
+// borrow summary
 exports.borrowRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const allBorrowBooks = yield borrow_model_1.Borrow.aggregate([
@@ -84,7 +84,7 @@ exports.borrowRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
     catch (error) {
-        return res.status(404).json({
+        return res.status(500).json({
             message: "Summary fetch failed",
             success: false,
             data: null,

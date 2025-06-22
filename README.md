@@ -1,14 +1,16 @@
 # Library Management System Backend
 
-A robust backend API for a Library Management System, built with **Express.js**, **TypeScript**, and **MongoDB** (via Mongoose). The project follows a clean architecture with modular folders for scalability and maintainability.
+This is a small backend project for manage a library. It is built using Express.js, MongoDB, Mongoose, TypeScript. A robust backend API for a Library Management System, built with Express.js, TypeScript, and MongoDB (via Mongoose). The project follows a clean architecture with modular folders for scalability and maintainability.
+
+## Live API Link: https://l2-assignment-3-psi.vercel.app/
 
 ## Features
 
-- **Book Management:** Full CRUD operations for books
-- **Borrowing System:** Borrow books with due dates and quantity tracking
-- **Mongoose Hooks & Methods:** Custom logic for data integrity and automation
-- **Type Safety:** Separate interface files for all models
-- **Clean Architecture:** Organized folders for configs, controllers, models, interfaces and other fils.
+- **Book Management:** Full CRUD operations for books.
+- **Borrowing System:** Borrow/return books with due dates and quantity tracking.
+- **Type Safety:** Separate interface files for all models.
+- **Aggregation Pipeline:** Aggregation Pipeline for showing Borrowed Books Summary.
+- **Clean Architecture:** Organized folders for configs, controllers, routes, models, interfaces.
 
 ## Folder Structure
 
@@ -23,10 +25,20 @@ src
   ├──app.ts
   └──server.ts
 ├── package.json
+├── .gitignore
 ├── vercel.json
 ├── tsconfig.json
 └── README.md
 ```
+
+## Technology used
+
+- **Express.js** – Framework for Node.js
+- **MongoDB** – NoSQL database
+- **Mongoose** – ODM to interact with MongoDB
+- **TypeScript** – JavaScript with types
+- **dotenv** - Used for .env variable management
+
 
 ## Installation
 
@@ -69,9 +81,9 @@ npm start
 ### Books
 
 - `GET /api/books` — List all books
-- `GET /api/books/:id` — Get book details
+- `GET /api/books/:id` — Get single book details
 - `POST /api/books` — Add a new book
-- `PUT /api/books/:id` — Update book info
+- `PUT /api/books/:id` — Update a book info
 - `DELETE /api/books/:id` — Remove a book
 
 ### Borrowing
