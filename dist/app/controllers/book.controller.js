@@ -19,7 +19,7 @@ exports.booksRoute = express_1.default.Router();
 // book creation
 exports.booksRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const bookBody = req.body;
+        const bookBody = yield req.body;
         const book = yield book_model_1.Book.create(bookBody);
         res.status(200).json({
             success: true,
@@ -92,8 +92,8 @@ exports.booksRoute.get("/:bookId", (req, res) => __awaiter(void 0, void 0, void 
 exports.booksRoute.put("/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.bookId;
-        const body = req.body;
-        const updateBook = yield book_model_1.Book.findByIdAndUpdate(bookId, body, {
+        const updatedBookBody = yield req.body;
+        const updateBook = yield book_model_1.Book.findByIdAndUpdate(bookId, updatedBookBody, {
             new: true,
         });
         if (updateBook)

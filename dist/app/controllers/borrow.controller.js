@@ -21,10 +21,16 @@ exports.borrowRoute = express_1.default.Router();
 exports.borrowRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const { book, quantity, dueDate } = req.body;
+        const { book, quantity, dueDate } = yield req.body;
         const foundBook = yield book_model_1.Book.findById(book);
+        if (!quantity || quantity < 1) {
+            return res.status(400).json({
+                message: "Quantity must be at least 1",
+                success: false,
+            });
+        }
         if (!foundBook || foundBook.copies < quantity) {
-            return res.status(404).json({
+            return res.status(400).json({
                 message: "Not enough copies available",
                 success: false,
             });
@@ -33,7 +39,7 @@ exports.borrowRoute.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
         (_a = foundBook.updateAvailability) === null || _a === void 0 ? void 0 : _a.call(foundBook);
         yield foundBook.save();
         const borrowAdding = yield borrow_model_1.Borrow.create({ book, quantity, dueDate });
-        res.json({
+        res.status(200).json({
             message: "Book borrowed successfully",
             success: true,
             data: borrowAdding,

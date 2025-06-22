@@ -7,12 +7,18 @@ export const borrowRoute = express.Router();
 // borrow a book
 borrowRoute.post("/", async (req: Request, res: Response): Promise<any> => {
   try {
-    const { book, quantity, dueDate } = req.body;
-
+    const { book, quantity, dueDate } = await req.body;
     const foundBook = await Book.findById(book);
 
+    if (!quantity || quantity < 1) {
+      return res.status(400).json({
+        message: "Quantity must be at least 1",
+        success: false,
+      });
+    }
+
     if (!foundBook || foundBook.copies < quantity) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Not enough copies available",
         success: false,
       });
@@ -26,7 +32,7 @@ borrowRoute.post("/", async (req: Request, res: Response): Promise<any> => {
 
     const borrowAdding = await Borrow.create({ book, quantity, dueDate });
 
-    res.json({
+    res.status(200).json({
       message: "Book borrowed successfully",
       success: true,
       data: borrowAdding,
