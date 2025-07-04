@@ -54,6 +54,8 @@ borrowRoute.get("/", async (req: Request, res: Response): Promise<any> => {
         $group: {
           _id: "$book",
           totalQuantity: { $sum: "$quantity" },
+          dueDate: { $max: "$dueDate" }, // latest due date
+          createdAt: { $max: "$createdAt" }, // latest borrow time
         },
       },
       {
@@ -73,9 +75,12 @@ borrowRoute.get("/", async (req: Request, res: Response): Promise<any> => {
             isbn: "$bookDetails.isbn",
           },
           totalQuantity: 1,
+          dueDate: 1,
+          createdAt: 1,
         },
       },
     ]);
+
     return res.status(200).json({
       message: "Borrowed books summary retrieved successfully",
       success: true,
@@ -90,3 +95,4 @@ borrowRoute.get("/", async (req: Request, res: Response): Promise<any> => {
     });
   }
 });
+
