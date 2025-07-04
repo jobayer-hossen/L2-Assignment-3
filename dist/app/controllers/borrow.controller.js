@@ -61,6 +61,8 @@ exports.borrowRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
                 $group: {
                     _id: "$book",
                     totalQuantity: { $sum: "$quantity" },
+                    dueDate: { $max: "$dueDate" }, // latest due date
+                    createdAt: { $max: "$createdAt" }, // latest borrow time
                 },
             },
             {
@@ -80,6 +82,8 @@ exports.borrowRoute.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
                         isbn: "$bookDetails.isbn",
                     },
                     totalQuantity: 1,
+                    dueDate: 1,
+                    createdAt: 1,
                 },
             },
         ]);
