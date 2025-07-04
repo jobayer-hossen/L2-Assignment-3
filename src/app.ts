@@ -1,8 +1,12 @@
 import express, { Application, Request, Response } from "express";
+import cors from "cors";
 import { booksRoute } from "./app/controllers/book.controller";
 import { borrowRoute } from "./app/controllers/borrow.controller";
 
 const app: Application = express();
+
+app.use(cors({ origin: "*" }));
+
 app.use(express.json());
 
 app.use("/api/books", booksRoute);
